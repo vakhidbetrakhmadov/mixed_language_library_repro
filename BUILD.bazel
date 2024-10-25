@@ -1,0 +1,56 @@
+load("@build_bazel_rules_swift//mixed_language:mixed_language_library.bzl", "mixed_language_library")
+load("@build_bazel_rules_apple//apple:header_map.bzl", "header_map")
+
+mixed_language_library(
+    name = "Foo_No_HeaderMap",
+    module_name = "Foo",
+    enable_modules = True,
+    hdrs = [
+        "Foo/Bar.h",
+    ],
+    swift_srcs = [
+        "Foo/Gar.swift",
+    ],
+    clang_srcs = [
+        "Foo/Bar.m",
+    ],
+    includes = [
+        "Foo",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+header_map(
+    name = "Foo.hmap",
+    module_name = "Foo",
+    hdrs = [
+        "Foo/Foo.h",
+        "Foo/Bar.h",
+        "Foo/Foo-Swift.h",
+    ],
+)
+
+mixed_language_library(
+    name = "Foo_HeaderMap",
+    module_name = "Foo",
+    enable_modules = True,
+    hdrs = [
+        "Foo/Bar.h",
+    ],
+    umbrella_header = "Foo/Foo.h",
+    swift_srcs = [
+        "Foo/Gar.swift",
+    ],
+    clang_srcs = [
+        "Foo/Bar.m",
+    ],
+    includes = [
+        "Foo.hmap",
+    ],
+    deps = [
+        "Foo.hmap",
+    ],
+    clang_copts = ["-I."],
+    swift_copts = ["-I."],
+    visibility = ["//visibility:public"],
+)
